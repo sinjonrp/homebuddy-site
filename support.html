@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ホームバディ（HomeBuddy）のサポートページ。よくある質問とお問い合わせ先。">
+<title>サポート | ホームバディ</title>
+<style>
+  /* ============ Reset ============ */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; }
+
+  /* ============ Design tokens ============ */
+  :root {
+    --brand: #B85C38;
+    --brand-dark: #96482A;
+    --brand-light: #D07850;
+    --accent: #1F7A66;
+    --bg: #FAF6F2;
+    --surface: #FFFFFF;
+    --border: #E5DAD0;
+    --text: #2B211C;
+    --text-muted: #6E625A;
+    --focus: #96482A;
+    --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    color-scheme: light;
+  }
+
+  /* ============ Base ============ */
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2 { color: var(--text); line-height: 1.5; font-weight: 700; text-wrap: balance; }
+  p, li { color: var(--text); }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 720px;
+    margin-inline: auto;
+    padding-inline: clamp(1.1rem, 4vw, 2.5rem);
+    padding-block: clamp(2rem, 4vw, 3.5rem) clamp(3rem, 5vw, 4.5rem);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .back-link:hover { color: var(--brand-dark); border-color: var(--border); }
+
+  .page-title { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); margin-bottom: 1rem; }
+  .lead { color: var(--text-muted); max-width: 34em; margin-bottom: 2.5rem; }
+
+  section {
+    margin-bottom: 2.2rem;
+    padding-bottom: 2.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  h2 { font-size: 1.05rem; margin-bottom: 1rem; color: var(--brand-dark); }
+  section p { margin-bottom: 0.9rem; }
+  section p:last-child { margin-bottom: 0; }
+
+  /* ============ FAQ ============ */
+  .faq-list { display: flex; flex-direction: column; gap: 0.7rem; }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.2rem 1.2rem;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 1rem 0;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary .chev { flex-shrink: 0; color: var(--text-muted); font-size: 0.8rem; }
+  .faq-item[open] summary .chev { transform: rotate(180deg); }
+  .faq-item .faq-a { padding-bottom: 1.1rem; color: var(--text-muted); font-size: 0.95rem; }
+
+  footer.page-footer { margin-top: 3rem; font-size: 0.8rem; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">&larr; ホームバディ トップへ</a>
+
+  <h1 class="page-title">ホームバディ サポート</h1>
+  <p class="lead">住宅購入検討者のための無料アプリです。本当の月額シミュレーション・住宅ローン計算・内覧記録・購入の段取りまで、スマホ1台でご利用いただけます。</p>
+
+  <section>
+    <h2>よくある質問</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>データはどこに保存されますか?<span class="chev">▾</span></summary>
+        <p class="faq-a">入力した物件情報や写真、計算履歴、設定はすべてお使いの端末内に保存されます。開発者のサーバーに送信されることはありません。</p>
+      </details>
+      <details class="faq-item">
+        <summary>機種変更時にデータは引き継げますか?<span class="chev">▾</span></summary>
+        <p class="faq-a">現バージョンではアプリ内にデータ移行機能はありません。端末内保存のため、iOSの機種移行（クイックスタート/iCloudバックアップからの復元）をご利用ください。</p>
+      </details>
+      <details class="faq-item">
+        <summary>無料ですか?<span class="chev">▾</span></summary>
+        <p class="faq-a">完全無料でご利用いただけます。課金や広告表示もありません。</p>
+      </details>
+      <details class="faq-item">
+        <summary>オフラインでも使えますか?<span class="chev">▾</span></summary>
+        <p class="faq-a">はい。すべての機能がオフラインで動作します。電波が弱い内覧先でも問題なくお使いいただけます。</p>
+      </details>
+      <details class="faq-item">
+        <summary>対応OSを教えてください<span class="chev">▾</span></summary>
+        <p class="faq-a">iOSに対応予定です。現在App Storeでの公開準備中で、ストアURLは未定です。</p>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <h2>お問い合わせ</h2>
+    <p>不具合のご報告・ご要望は <a href="mailto:sinjonrp@gmail.com">sinjonrp@gmail.com</a> へ。件名に「ホームバディ」と記載してください。</p>
+  </section>
+
+  <section>
+    <h2>プライバシーポリシー</h2>
+    <p><a href="privacy.html">プライバシーポリシーはこちら</a></p>
+  </section>
+
+  <footer class="page-footer">
+    <p>&copy; 2026 HomeBuddy</p>
+  </footer>
+</div>
+
+</body>
+</html>

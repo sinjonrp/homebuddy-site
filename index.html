@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="住宅購入検討者のための無料アプリ「ホームバディ」。本当の月額シミュレーション・内覧記録・購入の段取りをスマホ1台で。登録不要・データは端末内のみ・オフラインOK・広告なし。iOS版近日公開。">
+<title>ホームバディ | はじめての住宅購入に寄り添う相棒アプリ</title>
+<style>
+  /* ============ Reset ============ */
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; }
+
+  /* ============ Design tokens ============ */
+  :root {
+    --brand: #B85C38;
+    --brand-dark: #96482A;
+    --brand-light: #D07850;
+    --accent: #1F7A66;
+    --bg: #FAF6F2;
+    --surface: #FFFFFF;
+    --border: #E5DAD0;
+    --text: #2B211C;
+    --text-muted: #6E625A;
+    --focus: #96482A;
+    --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    color-scheme: light;
+  }
+
+  /* ============ Base ============ */
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    color: var(--text);
+    line-height: 1.5;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  p { color: var(--text); }
+  .measure { max-width: 34em; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ============ Skip link ============ */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    background: var(--brand-dark);
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    z-index: 100;
+  }
+  .skip-link:focus { top: 1rem; }
+
+  /* ============ Layout ============ */
+  .container {
+    max-width: 1080px;
+    margin-inline: auto;
+    padding-inline: clamp(1.1rem, 4vw, 2.5rem);
+  }
+  .section { padding-block: clamp(2.75rem, 4vw + 1.2rem, 5rem); }
+  .section--alt { background: var(--surface); }
+  .section-head { margin-bottom: clamp(1.75rem, 3vw, 2.5rem); }
+  .eyebrow {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--brand-dark);
+    font-weight: 700;
+    margin-bottom: 0.7em;
+  }
+  .section-title { font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2rem); }
+  .section-sub { margin-top: 0.9rem; color: var(--text-muted); max-width: 42em; }
+
+  /* ============ Top bar ============ */
+  .topbar { padding-block: 1.1rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .topbar .container {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 0.6rem 1.5rem;
+  }
+  .brandmark {
+    display: flex; align-items: baseline; gap: 0.5em;
+    font-weight: 700; font-size: 1.1rem; color: var(--brand-dark);
+  }
+  .brandmark .mark { font-size: 1.25rem; }
+  .brandmark small { font-size: 0.68rem; font-weight: 400; color: var(--text-muted); letter-spacing: 0.05em; }
+  .toplinks { display: flex; gap: clamp(0.9rem, 3vw, 1.6rem); font-size: 0.84rem; }
+  .toplinks a { text-decoration: none; color: var(--text-muted); border-bottom: 1px solid transparent; }
+  .toplinks a:hover { color: var(--brand-dark); border-color: var(--border); }
+
+  /* ============ Hero ============ */
+  .hero .container {
+    display: grid; grid-template-columns: 1fr; gap: clamp(2.2rem, 5vw, 3rem);
+    align-items: center;
+    padding-block: clamp(2rem, 4vw, 3.5rem) clamp(2.2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 900px) {
+    .hero .container { grid-template-columns: 1.1fr 0.9fr; }
+  }
+  .hero-title { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3rem); margin-bottom: 1.1rem; }
+  .hero-lead { color: var(--text-muted); font-size: 1.02rem; max-width: 32em; margin-bottom: 1.8rem; }
+
+  .cta-area { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.1rem; }
+  .badge-soon {
+    display: inline-flex; align-items: center; gap: 0.5em;
+    border: 1px solid var(--brand); color: var(--brand-dark);
+    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.02em;
+    padding: 0.65em 1.2em; border-radius: 999px; background: #fff;
+  }
+  .badge-soon::before {
+    content: ""; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--brand);
+  }
+  .cta-store-note { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* ============ Phone mockup (pure CSS) ============ */
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone {
+    width: min(78vw, 270px);
+    background: #2B211C;
+    border-radius: 40px;
+    padding: 10px;
+    box-shadow: 0 30px 60px -20px rgba(43, 33, 28, 0.35);
+  }
+  .phone-notch {
+    width: 38%; height: 18px; background: #2B211C;
+    border-radius: 0 0 12px 12px; margin: 0 auto; position: relative; z-index: 2;
+  }
+  .phone-screen {
+    background: var(--surface); border-radius: 28px; overflow: hidden;
+    margin-top: -18px; display: flex; flex-direction: column; min-height: 440px;
+  }
+  .phone-statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.55rem 1rem 0.15rem; font-size: 0.7rem; font-weight: 600; color: var(--text);
+  }
+  .phone-appheader {
+    background: var(--brand); color: #fff; padding: 0.8rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .phone-appheader .name { font-size: 0.92rem; font-weight: 700; }
+  .phone-body { flex: 1; background: var(--bg); padding: 0.75rem 0.65rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  .phone-row {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.55rem 0.7rem; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .phone-row .icon-box {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+  }
+  .phone-row .label { font-size: 0.76rem; color: var(--text); flex: 1; font-weight: 600; }
+  .phone-row .chev { color: var(--text-muted); font-size: 0.8rem; }
+  .phone-tabbar { display: flex; background: var(--brand-dark); padding: 0.5rem 0.4rem 0.7rem; }
+  .phone-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    color: rgba(255,255,255,0.6); font-size: 0.6rem; letter-spacing: 0.02em;
+  }
+  .phone-tab .tab-icon { font-size: 1.05rem; }
+  .phone-tab.active { color: #fff; }
+  .phone-tab.active .icon-holder { background: rgba(255,255,255,0.18); border-radius: 8px; padding: 0.1rem 0.5rem; }
+
+  /* ============ Trust badge band ============ */
+  .trust-band { background: var(--brand); }
+  .trust-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem 1.2rem; padding-block: 1.6rem;
+  }
+  .trust-item { display: flex; align-items: center; gap: 0.6rem; color: #fff; font-size: 0.86rem; font-weight: 600; }
+  .trust-item .trust-icon { font-size: 1.15rem; flex-shrink: 0; }
+
+  /* ============ Simulation spotlight ============ */
+  .sim-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: clamp(1.2rem, 3vw, 2rem); margin-top: 1.5rem;
+  }
+  .sim-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+  .sim-row:last-of-type { margin-bottom: 0; }
+  .sim-label { width: 100%; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+  .sim-track {
+    flex: 1; min-width: 140px; background: var(--bg); border-radius: 999px; height: 1.8rem;
+    display: flex; overflow: hidden; border: 1px solid var(--border);
+  }
+  .sim-fill { height: 100%; background: var(--text-muted); opacity: 0.55; border-radius: 999px; }
+  .sim-fill-wrap { height: 100%; display: flex; }
+  .sim-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: #fff; font-weight: 700; overflow: hidden; white-space: nowrap; }
+  .sim-seg--loan { background: var(--brand); }
+  .sim-seg--mgmt { background: var(--brand-light); }
+  .sim-seg--reserve { background: var(--accent); }
+  .sim-seg--tax { background: var(--brand-dark); }
+  .sim-value { font-weight: 700; font-size: 0.95rem; white-space: nowrap; min-width: 5em; text-align: right; }
+  .sim-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-top: 1.2rem; font-size: 0.78rem; color: var(--text-muted); }
+  .sim-legend li { display: flex; align-items: center; gap: 0.4em; }
+  .sim-legend .dot { width: 0.8em; height: 0.8em; border-radius: 3px; flex-shrink: 0; }
+  .sim-note { margin-top: 1rem; font-size: 0.76rem; color: var(--text-muted); }
+
+  /* ============ Features grid ============ */
+  .tab-block { margin-bottom: clamp(2rem, 3vw, 2.6rem); }
+  .tab-block:last-child { margin-bottom: 0; }
+  .tab-block-head { display: flex; align-items: baseline; gap: 0.7em; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab-chip {
+    display: inline-flex; align-items: center; gap: 0.4em; font-size: 0.85rem;
+    letter-spacing: 0.03em; padding: 0.35em 0.9em; border: 1px solid var(--border);
+    border-radius: 999px; color: var(--brand-dark); font-weight: 700; background: var(--surface);
+  }
+  .tab-block-head h3 { font-size: 0.95rem; color: var(--text-muted); font-weight: 400; }
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.9rem;
+  }
+  .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.1rem; }
+  .feature-card h4 { font-size: 0.92rem; color: var(--text); font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4em; }
+  .feature-card p { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* ============ Download section ============ */
+  .download-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: clamp(1.6rem, 4vw, 2.5rem); text-align: center;
+  }
+  .download-box p { color: var(--text-muted); margin-top: 0.8rem; }
+
+  /* ============ Disclaimer ============ */
+  .disclaimer-box {
+    background: var(--surface); border: 1px dashed var(--border); border-radius: 8px;
+    padding: 1.2rem 1.4rem; font-size: 0.85rem; color: var(--text-muted);
+  }
+
+  /* ============ Footer ============ */
+  .site-footer { background: var(--brand-dark); color: rgba(255,255,255,0.9); padding-block: clamp(2rem, 4vw, 3rem) 1.6rem; }
+  .site-footer .concept { font-size: 1.05rem; color: #fff; max-width: 24em; margin-bottom: 1.4rem; font-weight: 700; }
+  .footer-rule { border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .copyright { font-size: 0.76rem; color: rgba(255,255,255,0.7); }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.8rem; }
+  .footer-links a { color: rgba(255,255,255,0.85); text-decoration: underline; text-underline-offset: 2px; }
+  .footer-links a:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">メインコンテンツへスキップ</a>
+
+<header class="topbar">
+  <div class="container">
+    <div class="brandmark"><span class="mark">🏠</span>ホームバディ<small>HomeBuddy</small></div>
+    <nav class="toplinks" aria-label="ページ内メニュー">
+      <a href="#simulation">本当の月額</a>
+      <a href="#features">機能一覧</a>
+      <a href="#download">ダウンロード</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- 1. ヒーロー -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-copy">
+        <span class="eyebrow">住宅購入検討者のための無料アプリ／iOS版 近日公開</span>
+        <h1 class="hero-title">はじめての住宅購入に、<br>寄り添う相棒。</h1>
+        <p class="hero-lead measure">
+          物件探しの前に知っておきたい「本当の毎月の負担額」から、内覧の記録、購入までの段取りまで。
+          ホームバディは、大きな決断をひとりで抱え込まず、自分のスマホで確かめながら進めるための住宅購入サポートアプリです。
+        </p>
+        <div class="cta-area">
+          <!-- App Store公開後、下記のプレースホルダーを実際のストアURLへのリンクに差し替える -->
+          <span class="badge-soon">📱 App Storeで近日公開</span>
+          <span class="cta-store-note">登録不要・今すぐダウンロードできる準備中です</span>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone" role="img" aria-label="ホームバディのアプリ画面イメージ。お金タブに、本当の月額シミュレーション・住宅ローン計算・内覧記録・購入スケジュールなどのメニューが並ぶ。下部タブはお金・内覧・やること・設定。">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-statusbar">
+              <span class="num">9:41</span>
+              <span>📶 🔋</span>
+            </div>
+            <div class="phone-appheader">
+              <span class="name">🏠 ホームバディ</span>
+            </div>
+            <div class="phone-body">
+              <div class="phone-row">
+                <span class="icon-box">💴</span>
+                <span class="label">本当の月額シミュレーション</span>
+                <span class="chev">›</span>
+              </div>
+              <div class="phone-row">
+                <span class="icon-box">📊</span>
+                <span class="label">住宅ローン計算</span>
+                <span class="chev">›</span>
+              </div>
+              <div class="phone-row">
+                <span class="icon-box">📸</span>
+                <span class="label">内覧記録</span>
+                <span class="chev">›</span>
+              </div>
+              <div class="phone-row">
+                <span class="icon-box">🗓️</span>
+                <span class="label">購入スケジュール</span>
+                <span class="chev">›</span>
+              </div>
+            </div>
+            <div class="phone-tabbar">
+              <span class="phone-tab active"><span class="icon-holder"><span class="tab-icon">💴</span></span>お金</span>
+              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">📸</span></span>内覧</span>
+              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">✅</span></span>やること</span>
+              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">⚙️</span></span>設定</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 信頼バッジ帯 -->
+  <section class="trust-band">
+    <div class="container">
+      <ul class="trust-grid">
+        <li class="trust-item"><span class="trust-icon">🔓</span>登録不要</li>
+        <li class="trust-item"><span class="trust-icon">🆓</span>完全無料・広告なし</li>
+        <li class="trust-item"><span class="trust-icon">🔒</span>データは端末内のみ</li>
+        <li class="trust-item"><span class="trust-icon">📶</span>オフラインOK</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. 目玉機能: 本当の月額シミュレーション -->
+  <section class="section" id="simulation">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">目玉機能</span>
+        <h2 class="section-title">「本当の月額」が、はじめてわかる。</h2>
+        <p class="section-sub">
+          住宅ローンの返済額だけを見て「今の家賃と同じくらいだから買える」と思っていませんか。
+          実際の毎月の負担には、管理費・修繕積立金・固定資産税なども加わります。
+          ホームバディは、それらすべてを含めた<strong>本当の毎月の負担額</strong>を一目で見える化し、今の家賃と並べて比較します。
+        </p>
+      </div>
+
+      <div class="sim-card">
+        <div class="sim-row">
+          <span class="sim-label">今の家賃</span>
+          <div class="sim-track">
+            <div class="sim-fill-wrap" style="width: 60%;">
+              <div class="sim-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+          <span class="sim-value num">9.0万円</span>
+        </div>
+        <div class="sim-row">
+          <span class="sim-label">本当の月額（試算例）</span>
+          <div class="sim-track">
+            <div class="sim-fill-wrap" style="width: 78%;">
+              <div class="sim-seg sim-seg--loan" style="width: 70.1%;">ローン</div>
+              <div class="sim-seg sim-seg--mgmt" style="width: 12.8%;"></div>
+              <div class="sim-seg sim-seg--reserve" style="width: 10.3%;"></div>
+              <div class="sim-seg sim-seg--tax" style="width: 6.8%;"></div>
+            </div>
+          </div>
+          <span class="sim-value num">11.7万円</span>
+        </div>
+        <ul class="sim-legend">
+          <li><span class="dot" style="background: var(--brand);"></span>ローン返済</li>
+          <li><span class="dot" style="background: var(--brand-light);"></span>管理費</li>
+          <li><span class="dot" style="background: var(--accent);"></span>修繕積立金</li>
+          <li><span class="dot" style="background: var(--brand-dark);"></span>固定資産税・都市計画税（月割）</li>
+        </ul>
+        <p class="sim-note">※上記は試算例のイメージです。実際の金額は物件条件により異なります。詳しくは免責事項をご確認ください。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 機能一覧 -->
+  <section class="section section--alt" id="features">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">機能一覧</h2>
+        <p class="section-sub">お金の計算・内覧の記録・購入の段取りまで、住宅購入に必要なことをこのアプリ1つで。</p>
+      </div>
+
+      <div class="tab-block">
+        <div class="tab-block-head">
+          <span class="tab-chip">💴 お金の計算</span>
+          <h3>買える金額と本当の負担額を、その場で確認</h3>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card"><h4>住宅ローン計算・借入可能額</h4><p>元利均等/元金均等・ボーナス併用に対応。年収や毎月の返済額から借入可能額を逆算できます。</p></article>
+          <article class="feature-card"><h4>返済計画表</h4><p>年ごとの返済額・元金・利息・残高を一覧で確認できます。</p></article>
+          <article class="feature-card"><h4>諸費用計算</h4><p>仲介手数料・税金・登記費用・保険料などの概算をまとめて確認できます。</p></article>
+          <article class="feature-card"><h4>家賃から買える価格</h4><p>今の家賃と同じ負担で買える物件価格を逆算します。</p></article>
+        </div>
+      </div>
+
+      <div class="tab-block">
+        <div class="tab-block-head">
+          <span class="tab-chip">📸 内覧の記録</span>
+          <h3>見た物件を、記憶ではなく記録に残す</h3>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card"><h4>内覧記録</h4><p>物件ごとに写真・メモ・チェックリスト・採点を記録できます。</p></article>
+          <article class="feature-card"><h4>物件の比較</h4><p>気になる物件を並べて比較し、違いを整理できます。</p></article>
+          <article class="feature-card"><h4>方位磁石・日当たり・広さ換算</h4><p>内覧の現地で方角・日当たり・坪や畳の広さを確認できます。</p></article>
+        </div>
+      </div>
+
+      <div class="tab-block">
+        <div class="tab-block-head">
+          <span class="tab-chip">📋 購入の段取り</span>
+          <h3>次に何をすればいいかが、いつもわかる</h3>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card"><h4>購入スケジュール</h4><p>申込から引き渡しまでの標準的な流れを自動で作成します。</p></article>
+          <article class="feature-card"><h4>必要書類チェック</h4><p>フェーズごとに必要な書類をチェックリストで管理できます。</p></article>
+          <article class="feature-card"><h4>引っ越し手続きリスト</h4><p>時期別の手続きをまとめて確認できます。</p></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ダウンロード -->
+  <section class="section" id="download">
+    <div class="container">
+      <div class="download-box">
+        <!-- App Store公開後、下記のプレースホルダーを実際のストアURLへのリンクに差し替える -->
+        <span class="badge-soon">📱 App Storeで近日公開</span>
+        <p>ホームバディはiOS版の公開準備中です。登録不要・完全無料でお使いいただけます。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 免責 -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="disclaimer-box">
+        本アプリの計算結果は概算の参考値です。実際の金額・条件は金融機関・不動産会社・専門家にご確認ください。
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 7. フッター -->
+<footer class="site-footer">
+  <div class="container">
+    <p class="concept">はじめての住宅購入に、寄り添う相棒。</p>
+    <div class="footer-rule">
+      <p class="footer-links">
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="support.html">サポート</a>
+      </p>
+      <p class="copyright">&copy; 2026 HomeBuddy</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
