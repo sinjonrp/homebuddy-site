@@ -1,326 +1,178 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="住宅購入検討者のための無料アプリ「ホームバディ」。本当の月額シミュレーション・内覧記録・購入の段取りをスマホ1台で。登録不要・データは端末内のみ・オフラインOK・広告なし。iOS版近日公開。">
-<title>ホームバディ | はじめての住宅購入に寄り添う相棒アプリ</title>
-<style>
-  /* ============ Reset ============ */
-  *, *::before, *::after { box-sizing: border-box; }
-  * { margin: 0; }
-  ul, ol { padding: 0; list-style: none; }
-  a { color: inherit; }
-  button { font: inherit; color: inherit; background: none; border: none; }
-
-  /* ============ Design tokens ============ */
-  :root {
-    --brand: #B85C38;
-    --brand-dark: #96482A;
-    --brand-light: #D07850;
-    --accent: #1F7A66;
-    --bg: #FAF6F2;
-    --surface: #FFFFFF;
-    --border: #E5DAD0;
-    --text: #2B211C;
-    --text-muted: #6E625A;
-    --focus: #96482A;
-    --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
-    color-scheme: light;
-  }
-
-  /* ============ Base ============ */
-  html { font-size: 16px; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    line-height: 1.85;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-  h1, h2, h3, h4 {
-    color: var(--text);
-    line-height: 1.5;
-    font-weight: 700;
-    text-wrap: balance;
-  }
-  p { color: var(--text); }
-  .measure { max-width: 34em; }
-  .num { font-variant-numeric: tabular-nums; }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
-
-  /* ============ Skip link ============ */
-  .skip-link {
-    position: absolute;
-    left: 1rem;
-    top: -3rem;
-    background: var(--brand-dark);
-    color: #fff;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    z-index: 100;
-  }
-  .skip-link:focus { top: 1rem; }
-
-  /* ============ Layout ============ */
-  .container {
-    max-width: 1080px;
-    margin-inline: auto;
-    padding-inline: clamp(1.1rem, 4vw, 2.5rem);
-  }
-  .section { padding-block: clamp(2.75rem, 4vw + 1.2rem, 5rem); }
-  .section--alt { background: var(--surface); }
-  .section-head { margin-bottom: clamp(1.75rem, 3vw, 2.5rem); }
-  .eyebrow {
-    display: block;
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
-    color: var(--brand-dark);
-    font-weight: 700;
-    margin-bottom: 0.7em;
-  }
-  .section-title { font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2rem); }
-  .section-sub { margin-top: 0.9rem; color: var(--text-muted); max-width: 42em; }
-
-  /* ============ Top bar ============ */
-  .topbar { padding-block: 1.1rem; border-bottom: 1px solid var(--border); background: var(--surface); }
-  .topbar .container {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 0.6rem 1.5rem;
-  }
-  .brandmark {
-    display: flex; align-items: baseline; gap: 0.5em;
-    font-weight: 700; font-size: 1.1rem; color: var(--brand-dark);
-  }
-  .brandmark .mark { font-size: 1.25rem; }
-  .brandmark small { font-size: 0.68rem; font-weight: 400; color: var(--text-muted); letter-spacing: 0.05em; }
-  .toplinks { display: flex; gap: clamp(0.9rem, 3vw, 1.6rem); font-size: 0.84rem; }
-  .toplinks a { text-decoration: none; color: var(--text-muted); border-bottom: 1px solid transparent; }
-  .toplinks a:hover { color: var(--brand-dark); border-color: var(--border); }
-
-  /* ============ Hero ============ */
-  .hero .container {
-    display: grid; grid-template-columns: 1fr; gap: clamp(2.2rem, 5vw, 3rem);
-    align-items: center;
-    padding-block: clamp(2rem, 4vw, 3.5rem) clamp(2.2rem, 4vw, 3.5rem);
-  }
-  @media (min-width: 900px) {
-    .hero .container { grid-template-columns: 1.1fr 0.9fr; }
-  }
-  .hero-title { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3rem); margin-bottom: 1.1rem; }
-  .hero-lead { color: var(--text-muted); font-size: 1.02rem; max-width: 32em; margin-bottom: 1.8rem; }
-
-  .cta-area { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.1rem; }
-  .badge-soon {
-    display: inline-flex; align-items: center; gap: 0.5em;
-    border: 1px solid var(--brand); color: var(--brand-dark);
-    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.02em;
-    padding: 0.65em 1.2em; border-radius: 999px; background: #fff;
-  }
-  .badge-soon::before {
-    content: ""; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--brand);
-  }
-  .cta-store-note { font-size: 0.85rem; color: var(--text-muted); }
-
-  /* ============ Phone mockup (pure CSS) ============ */
-  .phone-wrap { display: flex; justify-content: center; }
-  .phone {
-    width: min(78vw, 270px);
-    background: #2B211C;
-    border-radius: 40px;
-    padding: 10px;
-    box-shadow: 0 30px 60px -20px rgba(43, 33, 28, 0.35);
-  }
-  .phone-notch {
-    width: 38%; height: 18px; background: #2B211C;
-    border-radius: 0 0 12px 12px; margin: 0 auto; position: relative; z-index: 2;
-  }
-  .phone-screen {
-    background: var(--surface); border-radius: 28px; overflow: hidden;
-    margin-top: -18px; display: flex; flex-direction: column; min-height: 440px;
-  }
-  .phone-statusbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.55rem 1rem 0.15rem; font-size: 0.7rem; font-weight: 600; color: var(--text);
-  }
-  .phone-appheader {
-    background: var(--brand); color: #fff; padding: 0.8rem 1rem;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .phone-appheader .name { font-size: 0.92rem; font-weight: 700; }
-  .phone-body { flex: 1; background: var(--bg); padding: 0.75rem 0.65rem; display: flex; flex-direction: column; gap: 0.45rem; }
-  .phone-row {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 0.55rem 0.7rem; display: flex; align-items: center; gap: 0.6rem;
-  }
-  .phone-row .icon-box {
-    width: 28px; height: 28px; border-radius: 8px; background: var(--bg);
-    display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
-  }
-  .phone-row .label { font-size: 0.76rem; color: var(--text); flex: 1; font-weight: 600; }
-  .phone-row .chev { color: var(--text-muted); font-size: 0.8rem; }
-  .phone-tabbar { display: flex; background: var(--brand-dark); padding: 0.5rem 0.4rem 0.7rem; }
-  .phone-tab {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
-    color: rgba(255,255,255,0.6); font-size: 0.6rem; letter-spacing: 0.02em;
-  }
-  .phone-tab .tab-icon { font-size: 1.05rem; }
-  .phone-tab.active { color: #fff; }
-  .phone-tab.active .icon-holder { background: rgba(255,255,255,0.18); border-radius: 8px; padding: 0.1rem 0.5rem; }
-
-  /* ============ Trust badge band ============ */
-  .trust-band { background: var(--brand); }
-  .trust-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem 1.2rem; padding-block: 1.6rem;
-  }
-  .trust-item { display: flex; align-items: center; gap: 0.6rem; color: #fff; font-size: 0.86rem; font-weight: 600; }
-  .trust-item .trust-icon { font-size: 1.15rem; flex-shrink: 0; }
-
-  /* ============ Simulation spotlight ============ */
-  .sim-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: clamp(1.2rem, 3vw, 2rem); margin-top: 1.5rem;
-  }
-  .sim-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
-  .sim-row:last-of-type { margin-bottom: 0; }
-  .sim-label { width: 100%; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
-  .sim-track {
-    flex: 1; min-width: 140px; background: var(--bg); border-radius: 999px; height: 1.8rem;
-    display: flex; overflow: hidden; border: 1px solid var(--border);
-  }
-  .sim-fill { height: 100%; background: var(--text-muted); opacity: 0.55; border-radius: 999px; }
-  .sim-fill-wrap { height: 100%; display: flex; }
-  .sim-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: #fff; font-weight: 700; overflow: hidden; white-space: nowrap; }
-  .sim-seg--loan { background: var(--brand); }
-  .sim-seg--mgmt { background: var(--brand-light); }
-  .sim-seg--reserve { background: var(--accent); }
-  .sim-seg--tax { background: var(--brand-dark); }
-  .sim-value { font-weight: 700; font-size: 0.95rem; white-space: nowrap; min-width: 5em; text-align: right; }
-  .sim-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-top: 1.2rem; font-size: 0.78rem; color: var(--text-muted); }
-  .sim-legend li { display: flex; align-items: center; gap: 0.4em; }
-  .sim-legend .dot { width: 0.8em; height: 0.8em; border-radius: 3px; flex-shrink: 0; }
-  .sim-note { margin-top: 1rem; font-size: 0.76rem; color: var(--text-muted); }
-
-  /* ============ Features grid ============ */
-  .tab-block { margin-bottom: clamp(2rem, 3vw, 2.6rem); }
-  .tab-block:last-child { margin-bottom: 0; }
-  .tab-block-head { display: flex; align-items: baseline; gap: 0.7em; margin-bottom: 1rem; flex-wrap: wrap; }
-  .tab-chip {
-    display: inline-flex; align-items: center; gap: 0.4em; font-size: 0.85rem;
-    letter-spacing: 0.03em; padding: 0.35em 0.9em; border: 1px solid var(--border);
-    border-radius: 999px; color: var(--brand-dark); font-weight: 700; background: var(--surface);
-  }
-  .tab-block-head h3 { font-size: 0.95rem; color: var(--text-muted); font-weight: 400; }
-  .feature-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.9rem;
-  }
-  .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.1rem; }
-  .feature-card h4 { font-size: 0.92rem; color: var(--text); font-weight: 700; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4em; }
-  .feature-card p { font-size: 0.82rem; color: var(--text-muted); }
-
-  /* ============ Download section ============ */
-  .download-box {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: clamp(1.6rem, 4vw, 2.5rem); text-align: center;
-  }
-  .download-box p { color: var(--text-muted); margin-top: 0.8rem; }
-
-  /* ============ Disclaimer ============ */
-  .disclaimer-box {
-    background: var(--surface); border: 1px dashed var(--border); border-radius: 8px;
-    padding: 1.2rem 1.4rem; font-size: 0.85rem; color: var(--text-muted);
-  }
-
-  /* ============ Footer ============ */
-  .site-footer { background: var(--brand-dark); color: rgba(255,255,255,0.9); padding-block: clamp(2rem, 4vw, 3rem) 1.6rem; }
-  .site-footer .concept { font-size: 1.05rem; color: #fff; max-width: 24em; margin-bottom: 1.4rem; font-weight: 700; }
-  .footer-rule { border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
-  .copyright { font-size: 0.76rem; color: rgba(255,255,255,0.7); }
-  .footer-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.8rem; }
-  .footer-links a { color: rgba(255,255,255,0.85); text-decoration: underline; text-underline-offset: 2px; }
-  .footer-links a:hover { color: #fff; }
-</style>
+<title>ホームバディ｜はじめての住宅購入に、寄り添う相棒</title>
+<meta name="description" content="住宅購入検討者のための無料iPhoneアプリ「ホームバディ」。本当の月額シミュレーションや内覧記録、購入の段取り管理まで、登録不要・完全無料・データは端末内のみで使えます。">
 </head>
 <body>
 
-<a class="skip-link" href="#main">メインコンテンツへスキップ</a>
 
-<header class="topbar">
-  <div class="container">
-    <div class="brandmark"><span class="mark">🏠</span>ホームバディ<small>HomeBuddy</small></div>
-    <nav class="toplinks" aria-label="ページ内メニュー">
-      <a href="#simulation">本当の月額</a>
-      <a href="#features">機能一覧</a>
-      <a href="#download">ダウンロード</a>
+
+
+    <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #FAF6F2; color: #2B211C; font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: hidden; }
+    a { color: #1F7A66; }
+    a:hover { color: #B85C38; }
+    [id] { scroll-margin-top: 92px; }
+    summary { list-style: none; cursor: pointer; }
+    summary::-webkit-details-marker { display: none; }
+    a.hb-cta:hover { background:#3D2F26; color:#fff; }
+    a.hb-link-accent:hover { color:#B85C38; border-bottom-color:#E5C4B0; }
+    a.hb-footer-link:hover { color:#fff; border-bottom-color:#fff; }
+    [data-float] { animation: hbFloat 7s ease-in-out infinite; }
+    [data-pulse] { animation: hbPulse 2.2s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      [data-float], [data-pulse] { animation: none; }
+    }
+    /* header nav overflows on narrow phones; drop it there since every
+       linked section is already reachable by scrolling the single page */
+    @media (max-width: 600px) {
+      header nav { display: none !important; }
+    }
+    @keyframes hbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes hbPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  </style>
+
+
+<header style="position:sticky;top:0;z-index:60;background:rgba(250,246,242,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #EEE3D7">
+  <div style="max-width:1120px;margin:0 auto;padding:0 clamp(18px,5vw,44px);height:64px;display:flex;align-items:center;gap:16px">
+    <a href="#hero" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit">
+      <span style="width:36px;height:36px;border-radius:11px;background:#B85C38;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(184,92,56,0.28)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5L12 3.5l8.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.8 9.8V20h12.4V9.8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.6 20v-4.6a2.4 2.4 0 0 1 4.8 0V20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1.15">
+        <span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:16.5px">ホームバディ</span>
+        <span style="font-size:9.5px;letter-spacing:0.18em;color:#A08D7D;font-weight:600">HOMEBUDDY</span>
+      </span>
+    </a>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:clamp(14px,3vw,28px)">
+      <a href="#simulation" style="font-size:13.5px;font-weight:600;color:#5D4F44;text-decoration:none">本当の月額</a>
+      <a href="#features" style="font-size:13.5px;font-weight:600;color:#5D4F44;text-decoration:none">機能一覧</a>
+      <a href="#faq" style="font-size:13.5px;font-weight:600;color:#5D4F44;text-decoration:none">FAQ</a>
     </nav>
   </div>
 </header>
 
-<main id="main">
+<main>
+  <!-- ============ HERO ============ -->
+  <section id="hero" data-screen-label="ヒーロー" style="position:relative;overflow:hidden">
+    <div style="max-width:1120px;margin:0 auto;padding:clamp(48px,8vw,88px) clamp(18px,5vw,44px) clamp(40px,6vw,72px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(40px,6vw,72px)">
 
-  <!-- 1. ヒーロー -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-copy">
-        <span class="eyebrow">住宅購入検討者のための無料アプリ／iOS版 近日公開</span>
-        <h1 class="hero-title">はじめての住宅購入に、<br>寄り添う相棒。</h1>
-        <p class="hero-lead measure">
-          物件探しの前に知っておきたい「本当の毎月の負担額」から、内覧の記録、購入までの段取りまで。
-          ホームバディは、大きな決断をひとりで抱え込まず、自分のスマホで確かめながら進めるための住宅購入サポートアプリです。
+      <div style="flex:1 1 460px;min-width:0">
+        <div data-reveal="0" style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:9px;background:#E4F0EB;border:1px solid #CBE2DA;color:#1F7A66;border-radius:18px;padding:7px 16px;font-size:13px;font-weight:700;line-height:1.6">
+          <span data-pulse="" style="width:8px;height:8px;border-radius:999px;background:#1F7A66;display:inline-block;flex-shrink:0"></span>
+          <span>iOS版 近日公開<span style="font-weight:500;color:#4E7A6E">・住宅購入検討者のための無料アプリ</span></span>
+        </div>
+
+        <h1 data-reveal="90" style="margin:22px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:900;font-size:clamp(32px,5.6vw,50px);line-height:1.42;letter-spacing:0.01em">
+          <span style="display:inline-block">はじめての</span><span style="display:inline-block">住宅購入に、</span><br>
+          <span style="display:inline-block">寄り添う<span style="color:#B85C38">相棒</span>。</span>
+        </h1>
+
+        <p data-reveal="180" style="margin:22px 0 0;font-size:clamp(14.5px,1.8vw,16.5px);line-height:2.15;color:#6B5B4E;max-width:34em">
+          物件探しの前に知っておきたい「本当の毎月の負担額」から、内覧の記録、購入の段取りまで。ホームバディは、大きな決断をひとりで抱え込まず、自分のスマホで確かめながら進めるためのアプリです。
         </p>
-        <div class="cta-area">
-          <!-- App Store公開後、下記のプレースホルダーを実際のストアURLへのリンクに差し替える -->
-          <span class="badge-soon">📱 App Storeで近日公開</span>
-          <span class="cta-store-note">登録不要・今すぐダウンロードできる準備中です</span>
+
+        <div data-reveal="270" style="margin-top:30px;display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <a href="#download" style="display:inline-flex;align-items:center;gap:12px;background:#2B211C;color:#fff;text-decoration:none;border-radius:16px;padding:12px 24px 12px 18px;box-shadow:0 12px 26px rgba(43,33,28,0.22)" class="hb-cta">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3.5v11M12 14.5l-4.5-4.5M12 14.5l4.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4.5 17v2.5h15V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span style="display:flex;flex-direction:column;line-height:1.25;text-align:left">
+              <span style="font-size:11px;color:rgba(255,255,255,0.72);letter-spacing:0.06em">App Storeで</span>
+              <span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:18px;font-weight:700">近日公開</span>
+            </span>
+          </a>
+          <a href="#simulation" style="font-size:14px;font-weight:700;color:#1F7A66;text-decoration:none;border-bottom:2px solid #BFDDD3;padding-bottom:2px" class="hb-link-accent">目玉機能を見る ↓</a>
+        </div>
+        <p data-reveal="330" style="margin:14px 0 0;font-size:12.5px;color:#9C8B7C">登録不要・完全無料。公開まで、いましばらくお待ちください。</p>
+
+        <div data-reveal="400" style="margin-top:26px;display:flex;flex-wrap:wrap;gap:9px">
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #EADFD5;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#4E4237"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#1F7A66"></circle><path d="M6.2 10.3l2.5 2.5 5.1-5.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>登録不要</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #EADFD5;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#4E4237"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#1F7A66"></circle><path d="M6.2 10.3l2.5 2.5 5.1-5.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>完全無料</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #EADFD5;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#4E4237"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#1F7A66"></circle><path d="M6.2 10.3l2.5 2.5 5.1-5.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>広告なし</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #EADFD5;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#4E4237"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#1F7A66"></circle><path d="M6.2 10.3l2.5 2.5 5.1-5.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>データは端末内のみ</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #EADFD5;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#4E4237"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#1F7A66"></circle><path d="M6.2 10.3l2.5 2.5 5.1-5.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>オフラインOK</span>
         </div>
       </div>
 
-      <div class="phone-wrap">
-        <div class="phone" role="img" aria-label="ホームバディのアプリ画面イメージ。お金タブに、本当の月額シミュレーション・住宅ローン計算・内覧記録・購入スケジュールなどのメニューが並ぶ。下部タブはお金・内覧・やること・設定。">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="phone-statusbar">
-              <span class="num">9:41</span>
-              <span>📶 🔋</span>
-            </div>
-            <div class="phone-appheader">
-              <span class="name">🏠 ホームバディ</span>
-            </div>
-            <div class="phone-body">
-              <div class="phone-row">
-                <span class="icon-box">💴</span>
-                <span class="label">本当の月額シミュレーション</span>
-                <span class="chev">›</span>
+      <!-- phone -->
+      <div data-reveal="200" style="flex:1 1 320px;display:flex;justify-content:center;min-width:0">
+        <div style="position:relative;padding:34px 30px 0">
+          <div style="position:absolute;bottom:-72px;left:50%;transform:translateX(-50%);width:min(86vw,384px);height:88%;border-radius:999px 999px 0 0;background:#F2E1D1"></div>
+          <div style="position:absolute;bottom:-72px;left:50%;transform:translateX(-50%);width:min(76vw,336px);height:80%;border-radius:999px 999px 0 0;border:1.5px solid #E8CFB5"></div>
+          <div style="position:absolute;top:6%;right:2%;width:18px;height:18px;border-radius:999px;background:#1F7A66"></div>
+          <div style="position:absolute;top:16%;left:0;width:11px;height:11px;border-radius:999px;border:3px solid #B85C38"></div>
+          <div data-float="" style="position:relative">
+            <div style="width:298px;height:648px">
+              <div style="width:402px;height:874px;transform:scale(0.741);transform-origin:top left">
+                <div style="width:402px;height:874px;border-radius:48px;overflow:hidden;position:relative;background:#F2F2F7;box-shadow:0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12);font-family:-apple-system,system-ui,sans-serif">
+                  <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:24px;background:#000;z-index:50"></div>
+                  <div style="position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;padding:21px 24px 19px;box-sizing:border-box">
+                    <div style="flex:1;height:22px;display:flex;align-items:center;justify-content:center"><span style="font-weight:600;font-size:17px;line-height:22px;color:#000">9:41</span></div>
+                    <div style="flex:1;height:22px;display:flex;align-items:center;justify-content:center;gap:7px">
+                      <svg width="19" height="12" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#000"></rect><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="#000"></rect><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#000"></rect><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="#000"></rect></svg>
+                      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="#000"></path><path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="#000"></path><circle cx="8.5" cy="10.5" r="1.5" fill="#000"></circle></svg>
+                      <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#000" stroke-opacity="0.35" fill="none"></rect><rect x="2" y="2" width="20" height="9" rx="2" fill="#000"></rect><path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill="#000" fill-opacity="0.4"></path></svg>
+                    </div>
+                  </div>
+                  <div style="height:100%">
+                  
+                    <div style="height:100%;display:flex;flex-direction:column;background:#FAF6F2;box-sizing:border-box;padding:74px 16px 0;gap:13px;overflow:hidden">
+                      <div style="display:flex;align-items:center;gap:9px">
+                        <span style="width:30px;height:30px;border-radius:9px;background:#B85C38;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5L12 3.5l8.5 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.8 9.8V20h12.4V9.8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                        <span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:18px">ホームバディ</span>
+                        <span style="margin-left:auto;color:#9C8B7C"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#9C8B7C" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path><circle cx="9" cy="7" r="2.3" fill="#FAF6F2"></circle><circle cx="15" cy="12" r="2.3" fill="#FAF6F2"></circle><circle cx="8" cy="17" r="2.3" fill="#FAF6F2"></circle></svg></span>
+                      </div>
+
+                      <div style="background:#B85C38;border-radius:22px;padding:17px 18px 15px;color:#fff;box-shadow:0 14px 28px rgba(184,92,56,0.3)">
+                        <div style="font-size:12.5px;font-weight:700;letter-spacing:0.04em;color:#F8DDCB">本当の月額シミュレーション</div>
+                        <div style="display:flex;align-items:flex-end;gap:16px;margin-top:12px">
+                          <div style="display:flex;align-items:flex-end;gap:9px;padding-bottom:2px">
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:26px;height:44px;border-radius:7px;background:rgba(255,255,255,0.42)"></div><span style="font-size:9.5px;color:#F3D4BE">家賃</span></div>
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:26px;height:60px;border-radius:7px;background:#fff"></div><span style="font-size:9.5px;color:#F3D4BE">実質</span></div>
+                          </div>
+                          <div style="flex:1">
+                            <div style="font-size:11.5px;color:#F3D4BE">いまの家賃 <b style="font-size:14px;color:#fff">9.0</b> 万円</div>
+                            <div style="font-size:12px;color:#F3D4BE;margin-top:5px">実質月額 <b style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:23px;color:#fff">11.7</b> <span style="color:#fff;font-weight:700">万円</span>/月</div>
+                          </div>
+                        </div>
+                        <div style="margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700"><span>くわしく見る</span><span>→</span></div>
+                      </div>
+
+                      <div>
+                        <div style="font-size:12px;font-weight:700;color:#8A7768;letter-spacing:0.06em;margin:2px 2px 8px">お金の計算</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+                          <div style="background:#fff;border:1px solid #EFE4D8;border-radius:15px;padding:12px 13px;display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2.5"></rect><path d="M8 7.5h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"></path></svg><span style="font-size:12.5px;font-weight:700">ローン計算</span></div>
+                          <div style="background:#fff;border:1px solid #EFE4D8;border-radius:15px;padding:12px 13px;display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-8M20 20H4"></path></svg><span style="font-size:12.5px;font-weight:700">借入可能額</span></div>
+                          <div style="background:#fff;border:1px solid #EFE4D8;border-radius:15px;padding:12px 13px;display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.4L14 21l-2-1.4L10 21l-2-1.4L6 21z"></path><path d="M9.5 8h5M9.5 12h5"></path></svg><span style="font-size:12.5px;font-weight:700">諸費用の概算</span></div>
+                          <div style="background:#fff;border:1px solid #EFE4D8;border-radius:15px;padding:12px 13px;display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5L12 3.5l8.5 7M5.8 9.8V20h12.4V9.8"></path><path d="M12 11l-1.8 2.6h3.6L12 16.2M12 13.6v.01"></path></svg><span style="font-size:12.5px;font-weight:700">家賃から価格</span></div>
+                        </div>
+                      </div>
+
+                      <div style="background:#fff;border:1px solid #EFE4D8;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:11px">
+                        <span style="width:34px;height:34px;border-radius:10px;background:#E4F0EB;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F7A66" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5z"></path><circle cx="12" cy="13" r="3.2"></circle></svg></span>
+                        <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700">内覧の記録</span><span style="display:block;font-size:11px;color:#9C8B7C;margin-top:1px">桜台レジデンス ほか2件</span></span>
+                        <span style="color:#C9B8A8;font-size:15px">›</span>
+                      </div>
+
+                      <div style="background:#fff;border:1px solid #EFE4D8;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:11px">
+                        <span style="width:34px;height:34px;border-radius:10px;background:#F7E9DF;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="16" rx="3"></rect><path d="M8 3v3M16 3v3M4 9.5h16"></path><path d="M8.5 14.5l2 2 4-4.2"></path></svg></span>
+                        <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700">購入スケジュール</span><span style="display:block;font-size:11px;color:#9C8B7C;margin-top:1px">次にやること：ローン事前審査</span><span style="display:block;height:5px;border-radius:99px;background:#F0E6DA;margin-top:7px;overflow:hidden"><span style="display:block;width:38%;height:100%;border-radius:99px;background:#1F7A66"></span></span></span>
+                      </div>
+
+                      <div style="margin-top:auto;background:#FFFFFF;border-top:1px solid #EFE4D8;display:flex;padding:10px 6px 30px">
+                        <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#B85C38"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 8.5l3 3.5 3-3.5M12 12v4.5M9.8 13.6h4.4M9.8 15.6h4.4"></path></svg><span style="font-size:9.5px;font-weight:700">お金</span></span>
+                        <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#A5937F"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#A5937F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5z"></path><circle cx="12" cy="13" r="3.2"></circle></svg><span style="font-size:9.5px;font-weight:600">内覧</span></span>
+                        <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#A5937F"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#A5937F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="15" height="15" rx="4"></rect><path d="M8.5 12l2.4 2.4 4.6-4.8"></path></svg><span style="font-size:9.5px;font-weight:600">やること</span></span>
+                        <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#A5937F"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#A5937F" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path><circle cx="9" cy="7" r="2.3" fill="#fff"></circle><circle cx="15" cy="12" r="2.3" fill="#fff"></circle><circle cx="8" cy="17" r="2.3" fill="#fff"></circle></svg><span style="font-size:9.5px;font-weight:600">設定</span></span>
+                      </div>
+                    </div>
+                  
+                                    </div>
+                  <div style="position:absolute;bottom:0;left:0;right:0;z-index:60;height:34px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:8px;pointer-events:none"><div style="width:139px;height:5px;border-radius:100px;background:rgba(0,0,0,0.25)"></div></div>
+                </div>
               </div>
-              <div class="phone-row">
-                <span class="icon-box">📊</span>
-                <span class="label">住宅ローン計算</span>
-                <span class="chev">›</span>
-              </div>
-              <div class="phone-row">
-                <span class="icon-box">📸</span>
-                <span class="label">内覧記録</span>
-                <span class="chev">›</span>
-              </div>
-              <div class="phone-row">
-                <span class="icon-box">🗓️</span>
-                <span class="label">購入スケジュール</span>
-                <span class="chev">›</span>
-              </div>
-            </div>
-            <div class="phone-tabbar">
-              <span class="phone-tab active"><span class="icon-holder"><span class="tab-icon">💴</span></span>お金</span>
-              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">📸</span></span>内覧</span>
-              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">✅</span></span>やること</span>
-              <span class="phone-tab"><span class="icon-holder"><span class="tab-icon">⚙️</span></span>設定</span>
             </div>
           </div>
         </div>
@@ -328,146 +180,249 @@
     </div>
   </section>
 
-  <!-- 2. 信頼バッジ帯 -->
-  <section class="trust-band">
-    <div class="container">
-      <ul class="trust-grid">
-        <li class="trust-item"><span class="trust-icon">🔓</span>登録不要</li>
-        <li class="trust-item"><span class="trust-icon">🆓</span>完全無料・広告なし</li>
-        <li class="trust-item"><span class="trust-icon">🔒</span>データは端末内のみ</li>
-        <li class="trust-item"><span class="trust-icon">📶</span>オフラインOK</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 3. 目玉機能: 本当の月額シミュレーション -->
-  <section class="section" id="simulation">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">目玉機能</span>
-        <h2 class="section-title">「本当の月額」が、はじめてわかる。</h2>
-        <p class="section-sub">
-          住宅ローンの返済額だけを見て「今の家賃と同じくらいだから買える」と思っていませんか。
-          実際の毎月の負担には、管理費・修繕積立金・固定資産税なども加わります。
-          ホームバディは、それらすべてを含めた<strong>本当の毎月の負担額</strong>を一目で見える化し、今の家賃と並べて比較します。
+  <!-- ============ 目玉機能：本当の月額 ============ -->
+  <section id="simulation" data-screen-label="本当の月額シミュレーション" style="background:#FFFFFF;border-top:1px solid #F1E7DC;border-bottom:1px solid #F1E7DC">
+    <div style="max-width:1120px;margin:0 auto;padding:clamp(68px,9vw,110px) clamp(18px,5vw,44px)">
+      <div data-reveal="0" style="text-align:center">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:#B85C38;font-weight:700;font-size:13px;letter-spacing:0.16em"><span style="width:7px;height:7px;border-radius:2.5px;background:#B85C38;display:inline-block"></span>目玉機能</span>
+        <h2 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:clamp(25px,4.6vw,40px);line-height:1.5">「本当の月額」が、<br style="display:none">はじめてわかる。</h2>
+        <p style="margin:18px auto 0;font-size:clamp(14px,1.7vw,15.5px);line-height:2.15;color:#6B5B4E;max-width:37em;text-align:left;text-wrap:pretty">
+          ローンの返済額だけを見て「いまの家賃と同じくらいだから大丈夫」と思っていませんか。実際の毎月の負担には、管理費・修繕積立金・固定資産税などが加わります。ホームバディはそれらをすべて含めた<b style="color:#B85C38">本当の毎月の負担額</b>を見える化し、いまの家賃と並べて比較します。
         </p>
       </div>
 
-      <div class="sim-card">
-        <div class="sim-row">
-          <span class="sim-label">今の家賃</span>
-          <div class="sim-track">
-            <div class="sim-fill-wrap" style="width: 60%;">
-              <div class="sim-fill" style="width: 100%;"></div>
+      <div data-reveal="120" data-chart="" style="margin:clamp(36px,5vw,56px) auto 0;max-width:920px;background:#FAF6F2;border:1px solid #EFE5DA;border-radius:26px;padding:clamp(22px,4vw,40px);display:flex;flex-wrap:wrap;gap:clamp(28px,4vw,48px);align-items:center">
+        <div style="flex:1 1 340px;min-width:0">
+          <div style="position:relative;display:flex;align-items:flex-end;justify-content:center;gap:clamp(36px,9vw,92px);padding:36px 8px 0">
+            <div data-diffline="" style="position:absolute;left:4px;right:4px;bottom:264px;border-top:2px dashed #C9AE95;z-index:2">
+              <span style="position:absolute;right:0;top:0;transform:translateY(-50%);background:#FDF1E8;border:1px solid #EBCDB6;color:#B85C38;font-size:12px;font-weight:700;border-radius:999px;padding:5px 13px;white-space:nowrap">家賃との差 <b style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:14px">+2.7万円</b>/月</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="font-size:13px;font-weight:700;color:#1F7A66;margin-bottom:8px"><span data-count="9.0" style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:24px">9.0</span> 万円</div>
+              <div data-bar="" style="width:clamp(84px,18vw,124px);height:234px;border-radius:14px 14px 6px 6px;background:#1F7A66;box-shadow:0 10px 22px rgba(31,122,102,0.22)"></div>
+              <div style="margin-top:10px;height:20px;font-size:13px;font-weight:700;color:#4E4237">いまの家賃</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="font-size:13px;font-weight:700;color:#B85C38;margin-bottom:8px"><span data-count="11.7" style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:24px">11.7</span> 万円</div>
+              <div data-bar="" style="width:clamp(84px,18vw,124px);height:304px;display:flex;flex-direction:column-reverse;border-radius:14px 14px 6px 6px;overflow:hidden;box-shadow:0 10px 22px rgba(184,92,56,0.24)">
+                <div style="height:247px;background:#B85C38"></div>
+                <div style="height:26px;background:#CE8256"></div>
+                <div style="height:18px;background:#E0A87D"></div>
+                <div style="height:13px;background:#EFCBA5"></div>
+              </div>
+              <div style="margin-top:10px;height:20px;font-size:13px;font-weight:700;color:#4E4237">本当の月額<span style="font-weight:500;color:#9C8B7C;font-size:11.5px">（試算例）</span></div>
             </div>
           </div>
-          <span class="sim-value num">9.0万円</span>
         </div>
-        <div class="sim-row">
-          <span class="sim-label">本当の月額（試算例）</span>
-          <div class="sim-track">
-            <div class="sim-fill-wrap" style="width: 78%;">
-              <div class="sim-seg sim-seg--loan" style="width: 70.1%;">ローン</div>
-              <div class="sim-seg sim-seg--mgmt" style="width: 12.8%;"></div>
-              <div class="sim-seg sim-seg--reserve" style="width: 10.3%;"></div>
-              <div class="sim-seg sim-seg--tax" style="width: 6.8%;"></div>
+
+        <div style="flex:1 1 280px;min-width:0">
+          <div style="font-size:13px;font-weight:700;color:#8A7768;letter-spacing:0.08em;margin-bottom:12px">本当の月額の内訳</div>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #EFE4D8"><span style="width:11px;height:11px;border-radius:4px;background:#B85C38"></span><span style="font-size:14px;color:#4E4237">ローン返済</span><b style="margin-left:auto;font-size:14.5px">9.5万円</b></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #EFE4D8"><span style="width:11px;height:11px;border-radius:4px;background:#CE8256"></span><span style="font-size:14px;color:#4E4237">管理費</span><b style="margin-left:auto;font-size:14.5px">1.0万円</b></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #EFE4D8"><span style="width:11px;height:11px;border-radius:4px;background:#E0A87D"></span><span style="font-size:14px;color:#4E4237">修繕積立金</span><b style="margin-left:auto;font-size:14.5px">0.7万円</b></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #EFE4D8"><span style="width:11px;height:11px;border-radius:4px;background:#EFCBA5"></span><span style="font-size:13.5px;color:#4E4237">固定資産税・都市計画税<span style="color:#9C8B7C;font-size:11.5px">（月割）</span></span><b style="margin-left:auto;font-size:14.5px">0.5万円</b></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:13px 2px 2px"><span style="font-size:14px;font-weight:700;color:#B85C38">合計（実質月額）</span><b style="margin-left:auto;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:19px;color:#B85C38">11.7万円</b></div>
+          </div>
+          <p style="margin:16px 0 0;font-size:11.5px;line-height:1.9;color:#9C8B7C">※上記は試算例のイメージです。実際の金額は物件条件により異なります。詳しくは<a href="#disclaimer" style="color:#1F7A66">免責事項</a>をご確認ください。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 機能一覧 ============ -->
+  <section id="features" data-screen-label="機能一覧">
+    <div style="max-width:1120px;margin:0 auto;padding:clamp(68px,9vw,110px) clamp(18px,5vw,44px)">
+      <div data-reveal="0" style="max-width:640px">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:#B85C38;font-weight:700;font-size:13px;letter-spacing:0.16em"><span style="width:7px;height:7px;border-radius:2.5px;background:#B85C38;display:inline-block"></span>機能一覧</span>
+        <h2 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:clamp(25px,4.6vw,40px);line-height:1.5">住宅購入に必要なことを、<br>このアプリ1つで。</h2>
+        <p style="margin:16px 0 0;font-size:14.5px;line-height:2.1;color:#6B5B4E">お金の計算から内覧の記録、購入の段取りまで。3つのグループに、必要な道具をそろえました。</p>
+      </div>
+
+      <div style="margin-top:clamp(32px,5vw,52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;align-items:stretch">
+
+        <div data-reveal="0" style="background:#fff;border:1px solid #EDE2D6;border-radius:22px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:46px;height:46px;border-radius:14px;background:#F7E9DF;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 8.5l3 3.5 3-3.5M12 12v4.5M9.8 13.6h4.4M9.8 15.6h4.4"></path></svg></span>
+            <span style="font-size:13px;font-weight:700;color:#B85C38;letter-spacing:0.1em">お金の計算</span>
+          </div>
+          <h3 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:19px;font-weight:700;line-height:1.65">「買える金額」と「本当の負担額」を、その場で確認</h3>
+          <div style="margin-top:14px;display:flex;flex-direction:column">
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">住宅ローン計算・借入可能額</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">元利均等・元金均等、ボーナス併用に対応。年収や毎月の返済額からの逆算もできます。</div></div>
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">返済計画表</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">年ごとの返済額・元金・利息・残高をひと目で確認できます。</div></div>
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">諸費用の概算</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">仲介手数料・税金・登記費用・保険料などをまとめて試算します。</div></div>
+            <div style="padding:13px 0 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">家賃から買える価格</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">いまの家賃と同じ負担で買える物件価格を逆算します。</div></div>
+          </div>
+        </div>
+
+        <div data-reveal="120" style="background:#fff;border:1px solid #EDE2D6;border-radius:22px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:46px;height:46px;border-radius:14px;background:#E4F0EB;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F7A66" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5z"></path><circle cx="12" cy="13" r="3.2"></circle></svg></span>
+            <span style="font-size:13px;font-weight:700;color:#1F7A66;letter-spacing:0.1em">内覧の記録</span>
+          </div>
+          <h3 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:19px;font-weight:700;line-height:1.65">見た物件を、記憶ではなく記録に残す</h3>
+          <div style="margin-top:14px;display:flex;flex-direction:column">
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">内覧メモ</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">物件ごとに写真・メモ・チェックリスト・採点を残せます。</div></div>
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">物件の比較</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">気になる物件を並べて、違いを整理できます。</div></div>
+            <div style="padding:13px 0 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">方位磁石・日当たり・広さ換算</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">内覧の現地で、方角・日当たり・坪や畳の広さをそのまま確認できます。</div></div>
+          </div>
+        </div>
+
+        <div data-reveal="240" style="background:#fff;border:1px solid #EDE2D6;border-radius:22px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:46px;height:46px;border-radius:14px;background:#F7E9DF;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="16" rx="3"></rect><path d="M8 3v3M16 3v3M4 9.5h16"></path><path d="M8.5 14.5l2 2 4-4.2"></path></svg></span>
+            <span style="font-size:13px;font-weight:700;color:#B85C38;letter-spacing:0.1em">購入の段取り</span>
+          </div>
+          <h3 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:19px;font-weight:700;line-height:1.65">「次に何をすればいいか」が、いつもわかる</h3>
+          <div style="margin-top:14px;display:flex;flex-direction:column">
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">購入スケジュール</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">申込から引き渡しまでの標準的な流れを自動で作成します。</div></div>
+            <div style="padding:13px 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">必要書類チェック</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">フェーズごとに必要な書類をチェックリストで管理できます。</div></div>
+            <div style="padding:13px 0 0;border-top:1px solid #F3EAE0"><div style="font-size:14.5px;font-weight:700">引っ越し手続きリスト</div><div style="margin-top:4px;font-size:13px;line-height:1.9;color:#6B5B4E">時期別の手続きをまとめて確認できます。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 利用の流れ ============ -->
+  <section id="flow" data-screen-label="利用の流れ" style="background:#1F7A66;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-140px;right:-120px;width:420px;height:420px;border-radius:999px;background:rgba(255,255,255,0.05)"></div>
+    <div style="position:absolute;bottom:-180px;left:-140px;width:460px;height:460px;border-radius:999px;background:rgba(255,255,255,0.04)"></div>
+    <div style="max-width:1120px;margin:0 auto;padding:clamp(68px,9vw,104px) clamp(18px,5vw,44px);position:relative">
+      <div data-reveal="0" style="text-align:center">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:#F4C9AF;font-weight:700;font-size:13px;letter-spacing:0.16em"><span style="width:7px;height:7px;border-radius:2.5px;background:#F4C9AF;display:inline-block"></span>利用の流れ</span>
+        <h2 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:clamp(25px,4.6vw,38px);line-height:1.5;color:#fff">使いはじめは、かんたん3ステップ。</h2>
+      </div>
+      <div style="margin-top:clamp(32px,5vw,52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:18px">
+        <div data-reveal="0" style="background:#fff;border-radius:20px;padding:28px 26px">
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:900;font-size:38px;color:#B85C38;line-height:1">1</span><span style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#B09A87">STEP</span></div>
+          <div style="margin-top:12px;font-size:16.5px;font-weight:700;line-height:1.7">App Storeから無料ダウンロード</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:2;color:#6B5B4E">登録・ログインは一切不要。開いたその瞬間から使えます。</p>
+        </div>
+        <div data-reveal="130" style="background:#fff;border-radius:20px;padding:28px 26px">
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:900;font-size:38px;color:#B85C38;line-height:1">2</span><span style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#B09A87">STEP</span></div>
+          <div style="margin-top:12px;font-size:16.5px;font-weight:700;line-height:1.7">いまの家賃と気になる条件を入力</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:2;color:#6B5B4E">年収や希望価格など、わかる範囲でOK。あとから何度でも変えられます。</p>
+        </div>
+        <div data-reveal="260" style="background:#fff;border-radius:20px;padding:28px 26px">
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:900;font-size:38px;color:#B85C38;line-height:1">3</span><span style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#B09A87">STEP</span></div>
+          <div style="margin-top:12px;font-size:16.5px;font-weight:700;line-height:1.7">「本当の月額」を見ながら進める</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:2;color:#6B5B4E">内覧の記録も、購入の段取りチェックも、同じアプリでそのまま。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" data-screen-label="FAQ" style="background:#FFFFFF;border-bottom:1px solid #F1E7DC">
+    <div style="max-width:800px;margin:0 auto;padding:clamp(68px,9vw,104px) clamp(18px,5vw,44px)">
+      <div data-reveal="0" style="text-align:center">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:#B85C38;font-weight:700;font-size:13px;letter-spacing:0.16em"><span style="width:7px;height:7px;border-radius:2.5px;background:#B85C38;display:inline-block"></span>よくある質問</span>
+        <h2 style="margin:16px 0 0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:clamp(25px,4.6vw,36px);line-height:1.5">気になることに、先にお答えします。</h2>
+      </div>
+      <div style="margin-top:clamp(28px,4vw,40px);display:flex;flex-direction:column;gap:12px">
+        <details data-faq="" data-reveal="0" style="background:#FAF6F2;border:1px solid #EFE4D8;border-radius:16px">
+          <summary style="display:flex;align-items:center;gap:14px;padding:17px 18px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;color:#B85C38;font-size:17px">Q</span><span style="flex:1;font-size:15px;font-weight:700;line-height:1.7">本当に無料ですか？</span><span data-arrow="" style="display:flex;transition:transform 0.3s"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#B85C38" stroke-width="2.2" stroke-linecap="round"></path></svg></span></summary>
+          <div style="padding:0 18px 18px 49px;font-size:14px;line-height:2.05;color:#5D4F44">はい、完全無料です。広告表示やアプリ内課金もありません。すべての機能を、そのままお使いいただけます。</div>
+        </details>
+        <details data-faq="" data-reveal="70" style="background:#FAF6F2;border:1px solid #EFE4D8;border-radius:16px">
+          <summary style="display:flex;align-items:center;gap:14px;padding:17px 18px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;color:#B85C38;font-size:17px">Q</span><span style="flex:1;font-size:15px;font-weight:700;line-height:1.7">会員登録や個人情報の入力は必要ですか？</span><span data-arrow="" style="display:flex;transition:transform 0.3s"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#B85C38" stroke-width="2.2" stroke-linecap="round"></path></svg></span></summary>
+          <div style="padding:0 18px 18px 49px;font-size:14px;line-height:2.05;color:#5D4F44">不要です。アカウント作成もメールアドレスの入力もありません。入力した内容はお使いのiPhoneの中だけに保存され、外部に送信されることはありません。</div>
+        </details>
+        <details data-faq="" data-reveal="140" style="background:#FAF6F2;border:1px solid #EFE4D8;border-radius:16px">
+          <summary style="display:flex;align-items:center;gap:14px;padding:17px 18px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;color:#B85C38;font-size:17px">Q</span><span style="flex:1;font-size:15px;font-weight:700;line-height:1.7">電波のない場所でも使えますか？</span><span data-arrow="" style="display:flex;transition:transform 0.3s"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#B85C38" stroke-width="2.2" stroke-linecap="round"></path></svg></span></summary>
+          <div style="padding:0 18px 18px 49px;font-size:14px;line-height:2.05;color:#5D4F44">使えます。すべての機能がオフラインで動作するので、内覧先のマンションの地下や移動中でも安心です。</div>
+        </details>
+        <details data-faq="" data-reveal="210" style="background:#FAF6F2;border:1px solid #EFE4D8;border-radius:16px">
+          <summary style="display:flex;align-items:center;gap:14px;padding:17px 18px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;color:#B85C38;font-size:17px">Q</span><span style="flex:1;font-size:15px;font-weight:700;line-height:1.7">計算結果はそのまま契約の判断に使えますか？</span><span data-arrow="" style="display:flex;transition:transform 0.3s"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#B85C38" stroke-width="2.2" stroke-linecap="round"></path></svg></span></summary>
+          <div style="padding:0 18px 18px 49px;font-size:14px;line-height:2.05;color:#5D4F44">計算結果はあくまで概算の参考値です。実際の金額・条件は、金融機関・不動産会社・税理士などの専門家に必ずご確認ください。「話を聞く前の予習」としてお使いいただくのがおすすめです。</div>
+        </details>
+        <details data-faq="" data-reveal="280" style="background:#FAF6F2;border:1px solid #EFE4D8;border-radius:16px">
+          <summary style="display:flex;align-items:center;gap:14px;padding:17px 18px"><span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;color:#B85C38;font-size:17px">Q</span><span style="flex:1;font-size:15px;font-weight:700;line-height:1.7">Android版の予定はありますか？</span><span data-arrow="" style="display:flex;transition:transform 0.3s"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#B85C38" stroke-width="2.2" stroke-linecap="round"></path></svg></span></summary>
+          <div style="padding:0 18px 18px 49px;font-size:14px;line-height:2.05;color:#5D4F44">まずはiOS版の公開準備を進めています。Android版は現時点では未定です。</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 開発者からのひとこと ============ -->
+  <section data-screen-label="開発者からのひとこと">
+    <div style="max-width:820px;margin:0 auto;padding:clamp(64px,8vw,96px) clamp(18px,5vw,44px)">
+      <div data-reveal="0" style="text-align:center">
+        <span style="display:inline-flex;align-items:center;gap:8px;color:#B85C38;font-weight:700;font-size:13px;letter-spacing:0.16em"><span style="width:7px;height:7px;border-radius:2.5px;background:#B85C38;display:inline-block"></span>開発者からのひとこと</span>
+      </div>
+      <div data-reveal="120" style="margin-top:26px;position:relative;background:#fff;border:1px solid #EDE2D6;border-radius:24px;padding:clamp(28px,4.5vw,44px)">
+        <span style="position:absolute;top:-18px;left:26px;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:900;font-size:52px;color:#B85C38;line-height:1">“</span>
+        <p style="margin:0;font-size:clamp(14.5px,1.8vw,16px);line-height:2.3;color:#4E4237;text-wrap:pretty">
+          はじめて家を買おうとしたとき、いちばん不安だったのは「結局、毎月いくら払うのか」が最後までよくわからなかったことでした。ホームバディは、あのときの自分に渡したかった道具です。売り込みも、広告も、登録もありません。あなたのペースで、納得のいく住まい選びを進めてください。
+        </p>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:10px">
+          <span style="width:26px;height:2px;background:#D9C6B2"></span>
+          <span style="font-size:13.5px;font-weight:700;color:#8A7768">ホームバディ 開発者</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ダウンロード ============ -->
+  <section id="download" data-screen-label="ダウンロード">
+    <div style="max-width:1120px;margin:0 auto;padding:0 clamp(18px,5vw,44px) clamp(72px,9vw,110px)">
+      <div data-reveal="0" style="background:#B85C38;border-radius:32px;padding:clamp(44px,7vw,76px) clamp(24px,5vw,64px);text-align:center;position:relative;overflow:hidden;box-shadow:0 24px 56px rgba(184,92,56,0.3)">
+        <div style="position:absolute;top:-120px;left:-90px;width:320px;height:320px;border-radius:999px;background:rgba(255,255,255,0.07)"></div>
+        <div style="position:absolute;bottom:-150px;right:-100px;width:380px;height:380px;border-radius:999px;background:rgba(255,255,255,0.06)"></div>
+        <div style="position:relative">
+          <h2 style="margin:0;font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:clamp(25px,4.6vw,38px);line-height:1.55;color:#fff">App Storeで、近日公開。</h2>
+          <p style="margin:16px auto 0;font-size:14.5px;line-height:2.1;color:#F6DFCE;max-width:33em">iOS版の公開準備を進めています。登録不要・完全無料で、公開日からすぐにお使いいただけます。</p>
+          <div style="margin-top:28px;display:flex;justify-content:center">
+            <div style="display:inline-flex;align-items:center;gap:12px;background:#2B211C;color:#fff;border-radius:16px;padding:13px 26px 13px 20px;box-shadow:0 14px 30px rgba(43,33,28,0.3)">
+              <svg width="25" height="25" viewBox="0 0 24 24" fill="none"><path d="M12 3.5v11M12 14.5l-4.5-4.5M12 14.5l4.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4.5 17v2.5h15V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span style="display:flex;flex-direction:column;line-height:1.25;text-align:left">
+                <span style="font-size:11px;color:rgba(255,255,255,0.72);letter-spacing:0.06em">App Storeで</span>
+                <span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-size:19px;font-weight:700">近日公開</span>
+              </span>
             </div>
           </div>
-          <span class="sim-value num">11.7万円</span>
-        </div>
-        <ul class="sim-legend">
-          <li><span class="dot" style="background: var(--brand);"></span>ローン返済</li>
-          <li><span class="dot" style="background: var(--brand-light);"></span>管理費</li>
-          <li><span class="dot" style="background: var(--accent);"></span>修繕積立金</li>
-          <li><span class="dot" style="background: var(--brand-dark);"></span>固定資産税・都市計画税（月割）</li>
-        </ul>
-        <p class="sim-note">※上記は試算例のイメージです。実際の金額は物件条件により異なります。詳しくは免責事項をご確認ください。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. 機能一覧 -->
-  <section class="section section--alt" id="features">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-title">機能一覧</h2>
-        <p class="section-sub">お金の計算・内覧の記録・購入の段取りまで、住宅購入に必要なことをこのアプリ1つで。</p>
-      </div>
-
-      <div class="tab-block">
-        <div class="tab-block-head">
-          <span class="tab-chip">💴 お金の計算</span>
-          <h3>買える金額と本当の負担額を、その場で確認</h3>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card"><h4>住宅ローン計算・借入可能額</h4><p>元利均等/元金均等・ボーナス併用に対応。年収や毎月の返済額から借入可能額を逆算できます。</p></article>
-          <article class="feature-card"><h4>返済計画表</h4><p>年ごとの返済額・元金・利息・残高を一覧で確認できます。</p></article>
-          <article class="feature-card"><h4>諸費用計算</h4><p>仲介手数料・税金・登記費用・保険料などの概算をまとめて確認できます。</p></article>
-          <article class="feature-card"><h4>家賃から買える価格</h4><p>今の家賃と同じ負担で買える物件価格を逆算します。</p></article>
-        </div>
-      </div>
-
-      <div class="tab-block">
-        <div class="tab-block-head">
-          <span class="tab-chip">📸 内覧の記録</span>
-          <h3>見た物件を、記憶ではなく記録に残す</h3>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card"><h4>内覧記録</h4><p>物件ごとに写真・メモ・チェックリスト・採点を記録できます。</p></article>
-          <article class="feature-card"><h4>物件の比較</h4><p>気になる物件を並べて比較し、違いを整理できます。</p></article>
-          <article class="feature-card"><h4>方位磁石・日当たり・広さ換算</h4><p>内覧の現地で方角・日当たり・坪や畳の広さを確認できます。</p></article>
-        </div>
-      </div>
-
-      <div class="tab-block">
-        <div class="tab-block-head">
-          <span class="tab-chip">📋 購入の段取り</span>
-          <h3>次に何をすればいいかが、いつもわかる</h3>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card"><h4>購入スケジュール</h4><p>申込から引き渡しまでの標準的な流れを自動で作成します。</p></article>
-          <article class="feature-card"><h4>必要書類チェック</h4><p>フェーズごとに必要な書類をチェックリストで管理できます。</p></article>
-          <article class="feature-card"><h4>引っ越し手続きリスト</h4><p>時期別の手続きをまとめて確認できます。</p></article>
+          <div style="margin-top:26px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
+            <span style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600">登録不要</span>
+            <span style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600">完全無料</span>
+            <span style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600">広告なし</span>
+            <span style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600">データは端末内のみ</span>
+            <span style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600">オフラインOK</span>
+          </div>
+          <p style="margin:20px 0 0;font-size:11.5px;color:#F0CDB6">※公開時期は変更になる場合があります。</p>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- 5. ダウンロード -->
-  <section class="section" id="download">
-    <div class="container">
-      <div class="download-box">
-        <!-- App Store公開後、下記のプレースホルダーを実際のストアURLへのリンクに差し替える -->
-        <span class="badge-soon">📱 App Storeで近日公開</span>
-        <p>ホームバディはiOS版の公開準備中です。登録不要・完全無料でお使いいただけます。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. 免責 -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="disclaimer-box">
-        本アプリの計算結果は概算の参考値です。実際の金額・条件は金融機関・不動産会社・専門家にご確認ください。
-      </div>
-    </div>
-  </section>
-
 </main>
 
-<!-- 7. フッター -->
-<footer class="site-footer">
-  <div class="container">
-    <p class="concept">はじめての住宅購入に、寄り添う相棒。</p>
-    <div class="footer-rule">
-      <p class="footer-links">
-        <a href="privacy.html">プライバシーポリシー</a>
-        <a href="support.html">サポート</a>
-      </p>
-      <p class="copyright">&copy; 2026 HomeBuddy</p>
+<!-- ============ フッター ============ -->
+<footer id="disclaimer" data-screen-label="フッター" style="background:#2B211C;color:#EFE3D7">
+  <div style="max-width:1120px;margin:0 auto;padding:clamp(48px,7vw,72px) clamp(18px,5vw,44px) 36px">
+    <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:32px;height:32px;border-radius:10px;background:#B85C38;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5L12 3.5l8.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.8 9.8V20h12.4V9.8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.6 20v-4.6a2.4 2.4 0 0 1 4.8 0V20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span style="font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','BIZ UDGothic','Meiryo',sans-serif;font-weight:700;font-size:16.5px;color:#fff">ホームバディ</span>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;color:#B7A697">はじめての住宅購入に、寄り添う相棒。</p>
+      </div>
+      <div style="display:flex;gap:22px;padding-top:6px">
+        <a href="privacy.html" style="font-size:13.5px;color:#E4CDB9;text-decoration:none;border-bottom:1px solid rgba(228,205,185,0.35);padding-bottom:2px" class="hb-footer-link">プライバシーポリシー</a>
+        <a href="support.html" style="font-size:13.5px;color:#E4CDB9;text-decoration:none;border-bottom:1px solid rgba(228,205,185,0.35);padding-bottom:2px" class="hb-footer-link">サポート</a>
+      </div>
+    </div>
+    <div style="margin-top:32px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:18px 20px">
+      <div style="font-size:12px;font-weight:700;color:#C9B6A4;letter-spacing:0.1em;margin-bottom:8px">免責事項</div>
+      <p style="margin:0;font-size:12px;line-height:2;color:#A8968A">本アプリで表示される計算結果は、入力内容にもとづく概算の参考値であり、正確性・完全性を保証するものではありません。住宅ローンの審査・金利・税金・諸費用など、実際の金額や条件は、金融機関・不動産会社・税理士等の専門家に必ずご確認ください。</p>
+    </div>
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <span style="font-size:12px;color:#8F7E70">© 2026 HomeBuddy</span>
+      <span style="font-size:12px;color:#8F7E70">iOS版 近日公開・日本語対応</span>
     </div>
   </div>
 </footer>
 
-</body>
-</html>
+
+
+</body></html>

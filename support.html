@@ -13,7 +13,7 @@
   a { color: inherit; }
   button { font: inherit; color: inherit; background: none; border: none; }
 
-  /* ============ Design tokens ============ */
+  /* ============ Design tokens (shared with LP) ============ */
   :root {
     --brand: #B85C38;
     --brand-dark: #96482A;
@@ -21,25 +21,31 @@
     --accent: #1F7A66;
     --bg: #FAF6F2;
     --surface: #FFFFFF;
-    --border: #E5DAD0;
+    --border: #EDE2D6;
     --text: #2B211C;
-    --text-muted: #6E625A;
+    --text-muted: #6B5B4E;
+    --text-soft: #9C8B7C;
+    --footer-bg: #2B211C;
+    --footer-text: #EFE3D7;
+    --footer-muted: #A8968A;
     --focus: #96482A;
-    --font-body: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    --font-heading: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDGothic', 'Meiryo', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif;
     color-scheme: light;
   }
 
   /* ============ Base ============ */
-  html { font-size: 16px; }
+  html { font-size: 16px; scroll-behavior: smooth; }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-body);
     line-height: 1.85;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
-  h1, h2 { color: var(--text); line-height: 1.5; font-weight: 700; text-wrap: balance; }
+  h1, h2 { color: var(--text); line-height: 1.5; font-weight: 700; font-family: var(--font-heading); text-wrap: balance; }
   p, li { color: var(--text); }
 
   a:focus-visible,
@@ -49,113 +55,224 @@
     border-radius: 2px;
   }
 
+  /* ============ Header ============ */
+  header.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: rgba(250, 246, 242, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid #EEE3D7;
+  }
+  .header-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 clamp(18px, 5vw, 44px);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .brand-badge {
+    width: 36px; height: 36px; border-radius: 11px; background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(184,92,56,0.28); flex-shrink: 0;
+  }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-ja { font-family: var(--font-heading); font-weight: 700; font-size: 16.5px; }
+  .brand-en { font-size: 9.5px; letter-spacing: 0.18em; color: #A08D7D; font-weight: 600; }
+  .site-nav { margin-left: auto; display: flex; align-items: center; gap: clamp(12px, 3vw, 24px); }
+  .site-nav a {
+    font-size: 13.5px; font-weight: 600; color: var(--text-muted); text-decoration: none;
+  }
+  .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--brand); }
+  @media (max-width: 600px) {
+    .site-nav { display: none; }
+  }
+
   /* ============ Layout ============ */
+  main { display: block; }
   .container {
     max-width: 720px;
     margin-inline: auto;
     padding-inline: clamp(1.1rem, 4vw, 2.5rem);
-    padding-block: clamp(2rem, 4vw, 3.5rem) clamp(3rem, 5vw, 4.5rem);
+    padding-block: clamp(2.4rem, 5vw, 3.8rem) clamp(3rem, 5vw, 4.5rem);
   }
 
   .back-link {
     display: inline-block;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    margin-bottom: 1.4rem;
+    font-size: 0.85rem;
+    color: var(--text-soft);
     text-decoration: none;
     border-bottom: 1px solid transparent;
   }
   .back-link:hover { color: var(--brand-dark); border-color: var(--border); }
 
-  .page-title { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); margin-bottom: 1rem; }
-  .lead { color: var(--text-muted); max-width: 34em; margin-bottom: 2.5rem; }
+  .page-title { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem); margin-bottom: 1rem; }
+  .lead { color: var(--text-muted); max-width: 34em; margin-bottom: 2.4rem; font-size: 0.98rem; }
 
-  section {
-    margin-bottom: 2.2rem;
-    padding-bottom: 2.2rem;
-    border-bottom: 1px solid var(--border);
-  }
-  section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-  h2 { font-size: 1.05rem; margin-bottom: 1rem; color: var(--brand-dark); }
-  section p { margin-bottom: 0.9rem; }
-  section p:last-child { margin-bottom: 0; }
-
-  /* ============ FAQ ============ */
-  .faq-list { display: flex; flex-direction: column; gap: 0.7rem; }
-  .faq-item {
+  .support-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.2rem 1.2rem;
+    border-radius: 22px;
+    padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.4rem, 3.5vw, 2.4rem);
+    margin-bottom: 1.6rem;
+  }
+  .support-card:last-child { margin-bottom: 0; }
+
+  h2 { font-size: 1.02rem; margin-bottom: 1rem; color: var(--brand-dark); }
+  .support-card p { margin-bottom: 0.9rem; font-size: 0.96rem; }
+  .support-card p:last-child { margin-bottom: 0; }
+  .support-card a { color: var(--accent); border-bottom: 1px solid rgba(31,122,102,0.35); text-decoration: none; }
+  .support-card a:hover { color: var(--brand); border-color: rgba(184,92,56,0.4); }
+
+  /* ============ FAQ ============ */
+  .faq-list { display: flex; flex-direction: column; gap: 12px; }
+  .faq-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0.1rem 1.1rem;
   }
   .faq-item summary {
     cursor: pointer;
     list-style: none;
-    padding: 1rem 0;
+    padding: 0.95rem 0;
     font-weight: 700;
     color: var(--text);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 12px;
+    font-size: 0.96rem;
   }
   .faq-item summary::-webkit-details-marker { display: none; }
-  .faq-item summary .chev { flex-shrink: 0; color: var(--text-muted); font-size: 0.8rem; }
+  .faq-item summary .q-mark {
+    font-family: var(--font-heading); font-weight: 700; color: var(--brand); font-size: 1.05rem; flex-shrink: 0;
+  }
+  .faq-item summary .q-text { flex: 1; }
+  .faq-item summary .chev { flex-shrink: 0; color: var(--text-soft); font-size: 0.8rem; transition: transform 0.3s; }
   .faq-item[open] summary .chev { transform: rotate(180deg); }
-  .faq-item .faq-a { padding-bottom: 1.1rem; color: var(--text-muted); font-size: 0.95rem; }
+  .faq-item .faq-a { padding: 0 0 1.05rem 1.75rem; color: var(--text-muted); font-size: 0.92rem; line-height: 1.9; }
 
-  footer.page-footer { margin-top: 3rem; font-size: 0.8rem; color: var(--text-muted); }
+  /* ============ Footer ============ */
+  footer.site-footer { background: var(--footer-bg); color: var(--footer-text); margin-top: clamp(2.5rem, 6vw, 4rem); }
+  .footer-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: clamp(40px, 6vw, 60px) clamp(18px, 5vw, 44px) 32px;
+  }
+  .footer-top {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: space-between;
+  }
+  .footer-brand-row { display: flex; align-items: center; gap: 10px; }
+  .footer-badge {
+    width: 32px; height: 32px; border-radius: 10px; background: var(--brand);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .footer-ja { font-family: var(--font-heading); font-weight: 700; font-size: 16.5px; color: #fff; }
+  .footer-tagline { margin: 12px 0 0; font-size: 13px; color: #B7A697; }
+  .footer-links { display: flex; gap: 20px; padding-top: 6px; flex-wrap: wrap; }
+  .footer-links a {
+    font-size: 13.5px; color: #E4CDB9; text-decoration: none;
+    border-bottom: 1px solid rgba(228,205,185,0.35); padding-bottom: 2px;
+  }
+  .footer-links a:hover, .footer-links a[aria-current="page"] { color: #fff; border-bottom-color: #fff; }
+  .footer-bottom {
+    margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px; color: var(--footer-muted);
+  }
 </style>
 </head>
 <body>
 
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5L12 3.5l8.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.8 9.8V20h12.4V9.8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.6 20v-4.6a2.4 2.4 0 0 1 4.8 0V20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-ja">ホームバディ</span>
+        <span class="brand-en">HOMEBUDDY</span>
+      </span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">トップへ</a>
+      <a href="privacy.html">プライバシー</a>
+      <a href="support.html" aria-current="page">サポート</a>
+    </nav>
+  </div>
+</header>
+
+<main>
 <div class="container">
   <a class="back-link" href="index.html">&larr; ホームバディ トップへ</a>
 
   <h1 class="page-title">ホームバディ サポート</h1>
   <p class="lead">住宅購入検討者のための無料アプリです。本当の月額シミュレーション・住宅ローン計算・内覧記録・購入の段取りまで、スマホ1台でご利用いただけます。</p>
 
-  <section>
+  <div class="support-card">
     <h2>よくある質問</h2>
     <div class="faq-list">
       <details class="faq-item">
-        <summary>データはどこに保存されますか?<span class="chev">▾</span></summary>
+        <summary><span class="q-mark">Q</span><span class="q-text">データはどこに保存されますか?</span><span class="chev">▾</span></summary>
         <p class="faq-a">入力した物件情報や写真、計算履歴、設定はすべてお使いの端末内に保存されます。開発者のサーバーに送信されることはありません。</p>
       </details>
       <details class="faq-item">
-        <summary>機種変更時にデータは引き継げますか?<span class="chev">▾</span></summary>
+        <summary><span class="q-mark">Q</span><span class="q-text">機種変更時にデータは引き継げますか?</span><span class="chev">▾</span></summary>
         <p class="faq-a">現バージョンではアプリ内にデータ移行機能はありません。端末内保存のため、iOSの機種移行（クイックスタート/iCloudバックアップからの復元）をご利用ください。</p>
       </details>
       <details class="faq-item">
-        <summary>無料ですか?<span class="chev">▾</span></summary>
+        <summary><span class="q-mark">Q</span><span class="q-text">無料ですか?</span><span class="chev">▾</span></summary>
         <p class="faq-a">完全無料でご利用いただけます。課金や広告表示もありません。</p>
       </details>
       <details class="faq-item">
-        <summary>オフラインでも使えますか?<span class="chev">▾</span></summary>
+        <summary><span class="q-mark">Q</span><span class="q-text">オフラインでも使えますか?</span><span class="chev">▾</span></summary>
         <p class="faq-a">はい。すべての機能がオフラインで動作します。電波が弱い内覧先でも問題なくお使いいただけます。</p>
       </details>
       <details class="faq-item">
-        <summary>対応OSを教えてください<span class="chev">▾</span></summary>
+        <summary><span class="q-mark">Q</span><span class="q-text">対応OSを教えてください</span><span class="chev">▾</span></summary>
         <p class="faq-a">iOSに対応予定です。現在App Storeでの公開準備中で、ストアURLは未定です。</p>
       </details>
     </div>
-  </section>
+  </div>
 
-  <section>
+  <div class="support-card">
     <h2>お問い合わせ</h2>
     <p>不具合のご報告・ご要望は <a href="mailto:sinjonrp@gmail.com">sinjonrp@gmail.com</a> へ。件名に「ホームバディ」と記載してください。</p>
-  </section>
+  </div>
 
-  <section>
+  <div class="support-card">
     <h2>プライバシーポリシー</h2>
     <p><a href="privacy.html">プライバシーポリシーはこちら</a></p>
-  </section>
-
-  <footer class="page-footer">
-    <p>&copy; 2026 HomeBuddy</p>
-  </footer>
+  </div>
 </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-row">
+          <span class="footer-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5L12 3.5l8.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.8 9.8V20h12.4V9.8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.6 20v-4.6a2.4 2.4 0 0 1 4.8 0V20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </span>
+          <span class="footer-ja">ホームバディ</span>
+        </div>
+        <p class="footer-tagline">はじめての住宅購入に、寄り添う相棒。</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">トップへ</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="support.html" aria-current="page">サポート</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 HomeBuddy</div>
+  </div>
+</footer>
 
 </body>
 </html>
