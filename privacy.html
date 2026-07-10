@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="ホームバディ（HomeBuddy）のプライバシーポリシー。">
 <title>プライバシーポリシー | ホームバディ</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23B85C38'/%3E%3Cg%20fill='none'%20stroke='%23fff'%20stroke-width='2.3'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6.5%2016.2%2016%207.5l9.5%208.7'/%3E%3Cpath%20d='M9%2014.8V25h14V14.8'/%3E%3Cpath%20d='M13%2025v-5a3%203%200%200%201%206%200v5'/%3E%3C/g%3E%3C/svg%3E">
 <style>
   /* ============ Reset ============ */
   *, *::before, *::after { box-sizing: border-box; }
@@ -161,6 +162,14 @@
     font-size: 12px; color: var(--footer-muted);
   }
 </style>
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VT88L6B182"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VT88L6B182');
+</script>
 </head>
 <body>
 
@@ -217,17 +226,26 @@
   </section>
 
   <section>
-    <h2>6. 第三者への提供</h2>
+    <h2>6. Webサイトのアクセス解析について</h2>
+    <p>当Webサイト（本ページを含むホームバディのWebサイト）では、サイトの利用状況の把握と改善のため、Google LLCが提供するアクセス解析ツール「Googleアナリティクス」を使用しています。</p>
+    <p>Googleアナリティクスは、Cookie等の識別子を用いて、閲覧ページ・滞在時間・ブラウザや端末の種類・おおよその地域などの情報を収集します。これらの情報は個人を特定するものではありません。収集された情報はGoogle社のサーバーに送信され、同社のプライバシーポリシーに基づいて管理されます。</p>
+    <p>送信される情報・利用目的の詳細は<a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener">「Googleのサービスを使用するサイトやアプリから収集した情報のGoogleによる使用」</a>をご確認ください。</p>
+    <p>計測を無効にしたい場合は、<a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener">Googleアナリティクス オプトアウト アドオン</a>をご利用ください。</p>
+    <p><strong>なお、アプリ「ホームバディ」本体はこれまでどおりデータを一切収集・送信しません。本項はWebサイトのみに適用されます。</strong></p>
+  </section>
+
+  <section>
+    <h2>7. 第三者への提供</h2>
     <p>ありません。</p>
   </section>
 
   <section>
-    <h2>7. 本ポリシーの変更</h2>
+    <h2>8. 本ポリシーの変更</h2>
     <p>内容を変更する場合は本ページで告知します。</p>
   </section>
 
   <section>
-    <h2>8. お問い合わせ</h2>
+    <h2>9. お問い合わせ</h2>
     <p>ご不明点は<a href="support.html">サポートページ</a>よりお問い合わせください。</p>
   </section>
   </div>
@@ -256,5 +274,18 @@
   </div>
 </footer>
 
+<script>
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || typeof gtag !== 'function') return;
+    var href = a.getAttribute('href') || '';
+    var name = null;
+    if (href.indexOf('lin.ee') !== -1) name = 'line_click';
+    else if (href.indexOf('lequioshousing.com') !== -1) name = 'company_site_click';
+    else if (href.indexOf('apps.apple.com') !== -1) name = 'app_store_click';
+    else if (href.indexOf('mailto:') === 0) name = 'mail_click';
+    if (name) gtag('event', name, { link_url: href, page_path: location.pathname });
+  }, true);
+</script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="ホームバディ（HomeBuddy）のサポートページ。よくある質問とお問い合わせ先。">
 <title>サポート | ホームバディ</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23B85C38'/%3E%3Cg%20fill='none'%20stroke='%23fff'%20stroke-width='2.3'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6.5%2016.2%2016%207.5l9.5%208.7'/%3E%3Cpath%20d='M9%2014.8V25h14V14.8'/%3E%3Cpath%20d='M13%2025v-5a3%203%200%200%201%206%200v5'/%3E%3C/g%3E%3C/svg%3E">
 <style>
   /* ============ Reset ============ */
   *, *::before, *::after { box-sizing: border-box; }
@@ -185,6 +186,14 @@
     font-size: 12px; color: var(--footer-muted);
   }
 </style>
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VT88L6B182"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VT88L6B182');
+</script>
 </head>
 <body>
 
@@ -235,7 +244,7 @@
       </details>
       <details class="faq-item">
         <summary><span class="q-mark">Q</span><span class="q-text">対応OSを教えてください</span><span class="chev">▾</span></summary>
-        <p class="faq-a">iOSに対応予定です。現在App Storeでの公開準備中で、ストアURLは未定です。</p>
+        <p class="faq-a">iOSに対応しています。<a href="https://apps.apple.com/jp/app/id6788581440" target="_blank" rel="noopener">App Store</a>から無料でダウンロードできます。</p>
       </details>
     </div>
   </div>
@@ -243,11 +252,17 @@
   <div class="support-card">
     <h2>お問い合わせ</h2>
     <p>不具合のご報告・ご要望は <a href="mailto:sinjonrp@gmail.com">sinjonrp@gmail.com</a> へ。件名に「ホームバディ」と記載してください。</p>
+    <p>住まい探しのご相談は <a href="https://lin.ee/P4oKWkU" target="_blank" rel="noopener">公式LINE</a> でも受け付けています。</p>
   </div>
 
   <div class="support-card">
     <h2>プライバシーポリシー</h2>
     <p><a href="privacy.html">プライバシーポリシーはこちら</a></p>
+  </div>
+
+  <div class="support-card">
+    <h2>運営会社</h2>
+    <p><a href="https://lequioshousing.com/" target="_blank" rel="noopener">有限会社レキオスハウジング</a></p>
   </div>
 </div>
 </main>
@@ -274,5 +289,18 @@
   </div>
 </footer>
 
+<script>
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || typeof gtag !== 'function') return;
+    var href = a.getAttribute('href') || '';
+    var name = null;
+    if (href.indexOf('lin.ee') !== -1) name = 'line_click';
+    else if (href.indexOf('lequioshousing.com') !== -1) name = 'company_site_click';
+    else if (href.indexOf('apps.apple.com') !== -1) name = 'app_store_click';
+    else if (href.indexOf('mailto:') === 0) name = 'mail_click';
+    if (name) gtag('event', name, { link_url: href, page_path: location.pathname });
+  }, true);
+</script>
 </body>
 </html>
